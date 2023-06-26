@@ -1,9 +1,30 @@
 import Phaser from "phaser";
 import WebFontFile from "./WebFontLoader";
 
+const DIFFICULTY = {
+  EASY: 1,
+  MEDIUM: 1.3,
+  HARD: 1.7,
+  INSANE: 2,
+  IMPOSSIBLE: 4,
+}
+
+const DIFFICULTY_LABELS = {
+  [DIFFICULTY.EASY]: "EASY",
+  [DIFFICULTY.MEDIUM]: "MEDIUM",
+  [DIFFICULTY.HARD]: "HARD",
+  [DIFFICULTY.INSANE]: "INSANE",
+  [DIFFICULTY.IMPOSSIBLE]: "IMPOSSIBLE",
+}
+
+const CPU_ACCELERATION = 4
+
 class Game extends Phaser.Scene {
   init() {
+    this.difficulty = DIFFICULTY.MEDIUM
+    this.ballVelocity = 500
     this.paddleRightVelocity = new Phaser.Math.Vector2(0, 0);
+    this.lastScore = 'player'
   }
 
   preload() {
@@ -20,7 +41,6 @@ class Game extends Phaser.Scene {
     this.hitBall = this.sound.add("hitBall");
     this.scoreCpu = this.sound.add("scoreCpu");
     this.scorePlayer = this.sound.add("scorePlayer");
-    // this.background = this.sound.add("background");
 
     this.scene.run("gameBackground");
     this.physics.world.setBounds(-100, 0, 1000, 500);
@@ -44,6 +64,7 @@ class Game extends Phaser.Scene {
     this.physics.add.collider(this.paddleRight, this.ball, this.collisionCallback(this.paddleRight));
 
     this.cursors = this.input.keyboard.createCursorKeys();
+    
 
     // this.background.play(undefined, { volume: 0.15 })
     const scoreStyle = {
@@ -51,9 +72,24 @@ class Game extends Phaser.Scene {
       fontFamily: '"Press Start 2P"',
     };
 
-    this.leftScore = this.add.text(350, 50, "0", scoreStyle).setOrigin(0.5, 0.5);
-    this.rightScore = this.add.text(450, 50, "0", scoreStyle).setOrigin(0.5, 0.5);
+    this.leftScore = this.add.text(300, 50, "0", scoreStyle).setOrigin(0.5, 0.5);
+    this.rightScore = this.add.text(500, 50, "0", scoreStyle).setOrigin(0.5, 0.5);
 
+    this.difficultyLabel = this.add.text(600, 10, `CPU: ${DIFFICULTY_LABELS[this.difficulty]}`, {
+      ...scoreStyle,
+      fontSize: 16
+    })
+
+    // this.levelGoal = this.add.text(200, 10, `Goal: ${DIFFICULTY_LABELS[this.difficulty]}`, {
+    //   ...scoreStyle,
+    //   fontSize: 16
+    // })
+
+  //   this.input.keyboard.on(`keydown-SPACE`, () => {
+  //     console.log({isPaused: this.scene.isPaused('game')})
+  //     if(this.scene.isPaused('game')) this.scene.resume('game')
+  //     else this.scene.pause('game')
+  // })
   }
 
   update() {
@@ -86,21 +122,21 @@ class Game extends Phaser.Scene {
 
     if (Math.abs(diff) < 50) return;
 
-    const aiSpeed = 3;
+    const aiSpeed = 2
 
     if (diff < 0) {
       this.paddleRightVelocity.y = -aiSpeed;
       if (diff > 70) {
-        this.paddleRightVelocity.y = 10;
+        this.paddleRightVelocity.y = CPU_ACCELERATION;
       }
       // if()
     } else if (diff > 0) {
       this.paddleRightVelocity.y = aiSpeed;
       if (diff < -70) {
-        this.paddleRightVelocity.y = -10;
+        this.paddleRightVelocity.y = -CPU_ACCELERATION
       }
     }
-    this.paddleRight.y += this.paddleRightVelocity.y;
+    this.paddleRight.y += (this.paddleRightVelocity.y * this.difficulty);
     this.paddleRight.body.updateFromGameObject();
   }
 
@@ -110,17 +146,28 @@ class Game extends Phaser.Scene {
     const vec = this.physics.velocityFromAngle(angle, 200);
     const randomNumber = Math.round(Math.random() * 5) - 1;
 
-    this.ball.body.setVelocity(-500, vec.y * randomNumber);
+    this.ball.body.setVelocity((this.lastScore === 'player' ? this.ballVelocity : -this.ballVelocity ) * this.difficulty, vec.y * randomNumber);
   }
 
   increaseScore(side = "left") {
     if (side === "left") {
         this.scorePlayer.play(undefined, { volume: 0.05})
         this.leftScore.setText(`${Number(this.leftScore.text) + 1}`);
+        this.lastScore = 'player'
     } else {
         this.scoreCpu.play(undefined, { volume: 0.05})
         this.rightScore.setText(`${Number(this.rightScore.text) + 1}`);
+        this.lastScore = 'cpu'
     }
+    const diffScore = Number(this.leftScore.text) - Number(this.rightScore.text)
+
+    if(diffScore >= 9) this.difficulty = DIFFICULTY.IMPOSSIBLE
+    if(diffScore >= 6) this.difficulty = DIFFICULTY.INSANE
+    else if(diffScore >= 3) this.difficulty = DIFFICULTY.HARD
+    else if(diffScore >= 1) this.difficulty = DIFFICULTY.MEDIUM
+    else if(diffScore <= 0) this.difficulty = DIFFICULTY.EASY
+
+    this.difficultyLabel.setText(`CPU: ${DIFFICULTY_LABELS[this.difficulty]}`)
   }
 
   collisionCallback(object, moving) {
@@ -152,6 +199,7 @@ class Game extends Phaser.Scene {
       this.tweens.add(colorConfig);
     };
   }
+  
 }
 
 export default Game;

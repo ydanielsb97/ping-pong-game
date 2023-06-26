@@ -1,18 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <style>
-            body {
-                height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background-color: #272727;
+
+<head>
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column-reverse;
+            justify-content: center;
+            align-items: center;
+            background-color: #272727 !important;
+            overflow: hidden;
+        }
+
+        .control-title {
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            color: white
+        }
+
+        .btn-space {
+            width: 300px;
+            height: 50px;
+            flex: 1
+        }
+
+        .controls-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px
+        }
+
+        .cursor-btns-box {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+        }
+
+        .cursor-btns-box button {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+        }
+
+        .lds-hourglass {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .lds-hourglass:after {
+            content: " ";
+            display: block;
+            border-radius: 50%;
+            width: 0;
+            height: 0;
+            margin: 8px;
+            box-sizing: border-box;
+            border: 32px solid #fff;
+            border-color: #fff transparent #fff transparent;
+            animation: lds-hourglass 1.2s infinite;
+        }
+
+        @keyframes lds-hourglass {
+            0% {
+                transform: rotate(0);
+                animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
             }
-        </style>
-        <title>Pong</title>
-    </head>
-    <body>
-        <script src="./dist/main.js"></script>
-    </body>
+
+            50% {
+                transform: rotate(900deg);
+                animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+            }
+
+            100% {
+                transform: rotate(1800deg);
+            }
+        }
+    </style>
+    <title>Pong</title>
+</head>
+
+<body>
+    <!-- <div class="lds-hourglass" id="loader"></div> -->
+    <script>
+        function isMobileDevice() {
+            return /Mobi|Android/i.test(navigator.userAgent);
+        }
+
+    </script>
+    <script src="./dist/main.1f19ae8e.js"></script>
+    <!-- 
+    <div id="controls-container">
+        <h3 class="control-title">Controls</h3>
+        <div class="controls-box">
+
+            <div>
+                <button data-key="32" class="btn-space" id="space-key">Space</button>
+            </div>
+            <div class="cursor-btns-box">
+                <button data-key="38" id="up-key">Up</button>
+                <button data-key="40" id="down-key">Down</button>
+            </div>
+
+        </div>
+    </div> -->
+</body>
+<script>
+
+    const triggerSpace = (press = true) => {
+        if (press) window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 32 }))
+        else window.dispatchEvent(new KeyboardEvent('keyup', { keyCode: 32 }))
+    }
+
+    const triggerUp = (press = true) => {
+        if (press) window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 38 }))
+        else window.dispatchEvent(new KeyboardEvent('keyup', { keyCode: 38 }))
+    }
+
+    const triggerDown = (press = true) => {
+        if (press) window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 40 }))
+        else window.dispatchEvent(new KeyboardEvent('keyup', { keyCode: 40 }))
+    }
+    // Button click event handling
+    // var buttonUp = document.getElementById('up-key');
+    // var buttonDown = document.getElementById('down-key');
+
+    // [document.getElementById("space-key"), buttonUp, buttonDown]
+    //     .map((item) => {
+    //         item.addEventListener("mousedown", (e) => {
+    //             window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: parseInt(e.target.getAttribute("data-key")) }))
+    //         })
+    //         item.addEventListener("mouseup", (e) => {
+    //             window.dispatchEvent(new KeyboardEvent('keyup', { keyCode: parseInt(e.target.getAttribute("data-key")) }))
+    //         })
+
+    //     })
+
+    // Touch event handling
+    document.addEventListener('touchstart', handleTouchStart, false);
+    document.addEventListener('touchend', handlerTouchEnd, false);
+    document.addEventListener('touchmove', handleTouchMove, false);
+
+    let xDown = null;
+    let yDown = null;
+    let swipeDirection = null;
+
+    function handleTouchStart(event) {
+        xDown = event.touches[0].clientX;
+        yDown = event.touches[0].clientY;
+        triggerSpace();
+    }
+
+    function handlerTouchEnd(event) {
+        triggerUp(false);
+        triggerDown(false);
+        swipeDirection = null; // Reset swipe direction
+    }
+
+    function handleTouchMove(event) {
+        if (!xDown || !yDown) {
+            return;
+        }
+
+        var xUp = event.touches[0].clientX;
+        var yUp = event.touches[0].clientY;
+
+        var xDiff = xDown - xUp;
+        var yDiff = yDown - yUp;
+
+        if (Math.abs(xDiff) > Math.abs(yDiff)) {
+            if (xDiff > 0) {
+                // Swipe left, perform action for arrow left
+            } else {
+                // Swipe right, perform action for arrow right
+            }
+        } else {
+            if (yDiff <= 0) {
+                // Swipe down
+                if (swipeDirection !== 'down') {
+                    triggerDown(true);
+                    triggerUp(false);
+                    swipeDirection = 'down'; // Update swipe direction
+                }
+            } else {
+                // Swipe up
+                if (swipeDirection !== 'up') {
+                    triggerUp(true);
+                    triggerDown(false);
+                    swipeDirection = 'up'; // Update swipe direction
+                }
+            }
+        }
+
+        // Reset touch variables
+        xDown = xUp;
+        yDown = yUp;
+    }
+
+        // Call the forceHorizontalView function when the page loads
+
+
+</script>
+
 </html>

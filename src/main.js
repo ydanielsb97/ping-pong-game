@@ -2,6 +2,7 @@ import Phaser from "phaser"
 import Game from "./scenes/Game"
 import GameBackground from "./scenes/GameBackground"
 import HomeScreen from "./scenes/HomeScreen"
+import InstructionsScreen from "./scenes/InstructionsScreen"
 
 const config = {
     width: 800,
@@ -22,6 +23,9 @@ const game = new Phaser.Game(config)
 game.scene.add('game', Game)
 game.scene.add('gameBackground', GameBackground)
 game.scene.add('homeScreen', HomeScreen)
+game.scene.add('instructionsScreen', InstructionsScreen)
 
 // game.scene.start('game')
 game.scene.start('homeScreen')
+
+game

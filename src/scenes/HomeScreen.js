@@ -1,13 +1,20 @@
 import Phaser from 'phaser'
 
 export default class HomeScreen extends Phaser.Scene {
+    init() {
+
+        const loader = document.getElementById("loader")
+        if(loader) loader.style.display = "none"
+        
+    }
     preload() {
+
         this.load.audio("gameStarts", "assets/game-starts.wav");
         this.load.start();
-
     }
 
     create() {
+
         this.gameStarts = this.sound.add("gameStarts");
 
         const title = this.add.text(400, 200, 'Retro Ping Pong', {
@@ -32,15 +39,14 @@ export default class HomeScreen extends Phaser.Scene {
         }
 
         this.tweens.add(colorConfig) 
-        
-        this.cursors = this.input.keyboard.addKey('ENTER', true);
 
         this.input.keyboard.once(`keydown-SPACE`, () => {
             this.gameStarts.play(undefined, { volume: 0.1 })
 
-            this.scene.run('game')
+            this.scene.run('instructionsScreen')
             this.scene.stop('homeScreen')
         })
+
     }
 
 }
