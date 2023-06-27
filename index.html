@@ -91,7 +91,7 @@
         }
 
     </script>
-    <script src="./dist/main.1f19ae8e.js"></script>
+    <script src="./dist/main.js"></script>
     <!-- 
     <div id="controls-container">
         <h3 class="control-title">Controls</h3>
@@ -124,21 +124,7 @@
         if (press) window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 40 }))
         else window.dispatchEvent(new KeyboardEvent('keyup', { keyCode: 40 }))
     }
-    // Button click event handling
-    // var buttonUp = document.getElementById('up-key');
-    // var buttonDown = document.getElementById('down-key');
-
-    // [document.getElementById("space-key"), buttonUp, buttonDown]
-    //     .map((item) => {
-    //         item.addEventListener("mousedown", (e) => {
-    //             window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: parseInt(e.target.getAttribute("data-key")) }))
-    //         })
-    //         item.addEventListener("mouseup", (e) => {
-    //             window.dispatchEvent(new KeyboardEvent('keyup', { keyCode: parseInt(e.target.getAttribute("data-key")) }))
-    //         })
-
-    //     })
-
+ 
     // Touch event handling
     document.addEventListener('touchstart', handleTouchStart, false);
     document.addEventListener('touchend', handlerTouchEnd, false);

@@ -28,9 +28,9 @@ class Game extends Phaser.Scene {
   }
 
   preload() {
-    this.load.audio("hitBall", "assets/ball-hit.wav");
-    this.load.audio("scoreCpu", "assets/score-cpu.wav");
-    this.load.audio("scorePlayer", "assets/score-player.wav");
+    this.load.audio("hitBall", "../assets/ball-hit.wav");
+    this.load.audio("scoreCpu", "../assets/score-cpu.wav");
+    this.load.audio("scorePlayer", "../assets/score-player.wav");
 
     const fonts = new WebFontFile(this.load, "Press Start 2P");
     this.load.addFile(fonts);

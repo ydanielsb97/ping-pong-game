@@ -9,7 +9,7 @@ export default class HomeScreen extends Phaser.Scene {
     }
     preload() {
 
-        this.load.audio("gameStarts", "assets/game-starts.wav");
+        this.load.audio("gameStarts", "../assets/game-starts.wav");
         this.load.start();
     }
 

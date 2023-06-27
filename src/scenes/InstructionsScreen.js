@@ -2,7 +2,7 @@ import Phaser from "phaser"
 
 export default class InstructionsScreen extends Phaser.Scene {
     preload() {
-        this.load.audio("gameStarts", "assets/game-starts.wav");
+        this.load.audio("gameStarts", "../assets/game-starts.wav");
         this.load.start();
 
     }
@@ -14,8 +14,8 @@ export default class InstructionsScreen extends Phaser.Scene {
         text.setOrigin(0.5, 0.5)
         const textInstructions = isMobileDevice() ? "Touch the screen to move the paddle." : "Use the arrow keys up and down."
 
-        this.add.text(200, 200, textInstructions, { fontSize: 22 })
-        text.setAlign("center")
+        const instruction = this.add.text(200, 200, textInstructions, { fontSize: 22 }).setOrigin(0.5, 0.5)
+        instruction.setAlign("center")
 
 
         const subTitle = this.add.text(400, 300, 'Press SPACE to start', {
